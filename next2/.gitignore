@@ -1,0 +1,75 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+/dist
+/tmp
+/out-tsc
+
+# dependencies
+node_modules
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+/data
+licenses.json
+.log
+
+# System Files
+.DS_Store
+Thumbs.db
+.node_modules
+package-lock.json
+target/*
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+!.yarn/cache
+.pnp.loader.mjs
+.pnp.cjs
+*.env*
+data
+/test-results/
+/playwright-report/
+/playwright/.cache/
+playwright-report
+licenses.json
+.vscode
+apps/halo/src/pages/leaflet/wind-global.json
+apps/halo/src/pages/leaflet/meps_weatherapi_oslofjord.grb
+install_nvm.sh
+.prisma/*
+.prisma/
+yarn.lock
+dump.rdb
+logs/error.log
+
+# Reports
+junit.xml
+
+.next/
