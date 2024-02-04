@@ -11,7 +11,6 @@ export const fetchPosts = () => {
       throw error;
     });
 };
-
 export const addNewPost = (newPost) => {
   return axios
     .post(`${API_BASE_URL}/posts`, newPost)
@@ -21,7 +20,6 @@ export const addNewPost = (newPost) => {
       throw error;
     });
 };
-
 export const deletePost = (postId) => {
   return axios
     .delete(`${API_BASE_URL}/posts/${postId}`)
@@ -31,33 +29,12 @@ export const deletePost = (postId) => {
       throw error;
     });
 };
-
 export const updatePost = (postId, updatedPost) => {
   return axios
     .put(`${API_BASE_URL}/posts/${postId}`, updatedPost)
     .then((response) => response.data)
     .catch((error) => {
       console.error("Failed to update post", error);
-      throw error;
-    });
-};
-
-export const registerUser = (username, email, password) => {
-  return axios
-    .post(`${API_BASE_URL}/users`, { username, email, password })
-    .then((response) => response.data)
-    .catch((error) => {
-      console.error("Failed to register user", error);
-      throw error;
-    });
-};
-
-export const loginUser = (username, password) => {
-  return axios
-    .post(`${API_BASE_URL}/users/login`, { username, password })
-    .then((response) => response.data)
-    .catch((error) => {
-      console.error("Failed to login", error);
       throw error;
     });
 };

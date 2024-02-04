@@ -1,60 +1,49 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import * as api from "../api/postApi";
-import { useRouter } from "next/router";
+import * as apiu from "../api/userApi";
+
+const handleApiResponse = (set, onSuccess, onError) => async (promise) => {
+  try {
+    const result = await promise;
+    onSuccess(result);
+  } catch (error) {
+    console.error(onError, error);
+  }
+};
 
 export const useStore = create(
   devtools((set) => ({
     // User state
-    posts: [],
     user: null,
     setUser: (user) => set({ user }),
     clearUser: () => set({ user: null }),
-    registerUser: (username, email, password) => {
-      api
-        .registerUser(username, email, password)
-        .then((user) => {
-          set({ user: user }); // Save the new user in the state
-          alert("User created successfully");
-        })
-        .catch((error) => {
-          console.error("Error in registerUser:", error);
-          alert("Failed to create user");
-        });
-    },
-    loginUser: (username, password) => {
-      api
-        .loginUser(username, password)
-        .then((response) => {
-          console.log("API Response:", response);
-          set({
-            user: {
-              username: response.username,
-              userId: response.userId,
-            },
-          });
-        })
-        .catch((error) => {
-          console.error("Error in loginUser:", error);
-          alert("Login failed");
-        });
-    },
 
-    fetchUserPosts: () => {
-      const state = useStore.getState();
-      console.log("Current State", state.user);
-      if (state.user.userId) {
-        api
-          .fetchPostsByUser(state.user.userId)
-          .then((posts) => {
-            set({ posts });
-            console.log("💚posts", posts);
-          })
-          .catch((error) => {
-            console.error("Error in fetchUserPosts:", error);
+    // User actions
+    registerUser: (username, email, password) =>
+      handleApiResponse(
+        set,
+        (user) => {
+          set({ user });
+          alert("User created successfully");
+        },
+        "Error in registerUser"
+      )(apiu.registerUser(username, email, password)),
+
+    loginUser: (username, password) =>
+      handleApiResponse(
+        set,
+        (response) => {
+          set({
+            user: { username: response.username, userId: response.userId },
           });
-      }
-    },
+          alert("Logged In");
+        },
+        "Error in loginUser"
+      )(apiu.loginUser(username, password)),
+
+    // Post state
+    posts: [],
     newPostTitle: "",
     setNewPostTitle: (title) => set({ newPostTitle: title }),
     newPostContent: "",
@@ -62,16 +51,24 @@ export const useStore = create(
     newPostImageUrl: "",
     setNewPostImageUrl: (imageUrl) => set({ newPostImageUrl: imageUrl }),
 
-    fetchPosts: () => {
-      api
-        .fetchPosts()
-        .then((posts) => {
-          set({ posts });
-        })
-        .catch((error) => {
-          console.error("Error in fetchPosts:", error);
-        });
+    // Post actions
+    fetchUserPosts: () => {
+      const state = useStore.getState();
+      if (state.user.userId) {
+        handleApiResponse(
+          set,
+          (posts) => set({ posts }),
+          "Error in fetchUserPosts"
+        )(api.fetchPostsByUser(state.user.userId));
+      }
     },
+
+    fetchPosts: () =>
+      handleApiResponse(
+        set,
+        (posts) => set({ posts }),
+        "Error in fetchPosts"
+      )(api.fetchPosts()),
 
     addNewPost: () => {
       const state = useStore.getState();
@@ -82,9 +79,9 @@ export const useStore = create(
         image_url: state.newPostImageUrl,
       };
 
-      api
-        .addNewPost(newPost)
-        .then((addedPost) => {
+      handleApiResponse(
+        set,
+        (addedPost) => {
           set((state) => ({
             posts: [...state.posts, addedPost],
             newPostTitle: "",
@@ -92,55 +89,50 @@ export const useStore = create(
             newPostImageUrl: "",
           }));
           alert("Post Added");
-        })
-        .catch((error) => {
-          console.error("Error in addNewPost:", error);
-        });
+        },
+        "Error in addNewPost"
+      )(api.addNewPost(newPost));
     },
 
     deletePost: (postId) => {
       const state = useStore.getState();
-      // Find the post to be deleted
       const postToDelete = state.posts.find((post) => post.id === postId);
 
-      // Check if the user is the owner of the post
       if (
         postToDelete &&
         state.user &&
         state.user.userId === postToDelete.user_id
       ) {
-        api
-          .deletePost(postId)
-          .then(() => {
+        handleApiResponse(
+          set,
+          () => {
             set((state) => ({
               posts: state.posts.filter((post) => post.id !== postId),
             }));
             alert("Post deleted successfully");
-          })
-          .catch((error) => {
-            console.error("Error in deletePost:", error);
-          });
+          },
+          "Error in deletePost"
+        )(api.deletePost(postId));
       } else {
-        // User is not authorized to delete the post
         alert("You are not authorized to delete this post.");
       }
     },
+
     updatePost: (postId, updatedPost) => {
-      const state = useStore.getState();
-      api
-        .updatePost(postId, updatedPost)
-        .then((updated) => {
+      handleApiResponse(
+        set,
+        (updated) => {
           set((state) => ({
             posts: state.posts.map((post) =>
               post.id === postId ? updated : post
             ),
           }));
           alert("Post updated successfully");
-        })
-        .catch((error) => {
-          console.error("Error in updatePost:", error);
-        });
+        },
+        "Error in updatePost"
+      )(api.updatePost(postId, updatedPost));
     },
+
     handleEditPost: (post) => {
       set({
         newPostTitle: post.title,
@@ -160,7 +152,7 @@ export const useStore = create(
 
       try {
         await api.updatePost(postId, updatedPost);
-        useStore.setState((state) => ({
+        set((state) => ({
           posts: state.posts.map((post) =>
             post.id === postId ? { ...post, ...updatedPost } : post
           ),
@@ -173,28 +165,24 @@ export const useStore = create(
 
     handleDeletePost: (postId) => {
       const state = useStore.getState();
-      // Find the post to be deleted
       const postToDelete = state.posts.find((post) => post.id === postId);
 
-      // Check if the user is the owner of the post
       if (
         postToDelete &&
         state.user &&
         state.user.userId === postToDelete.user_id
       ) {
-        api
-          .deletePost(postId)
-          .then(() => {
-            useStore.setState((state) => ({
+        handleApiResponse(
+          set,
+          () => {
+            set((state) => ({
               posts: state.posts.filter((post) => post.id !== postId),
             }));
             alert("Post deleted successfully");
-          })
-          .catch((error) => {
-            console.error("Error in deletePost:", error);
-          });
+          },
+          "Error in deletePost"
+        )(api.deletePost(postId));
       } else {
-        // User is not authorized to delete the post
         alert("You are not authorized to delete this post.");
       }
     },

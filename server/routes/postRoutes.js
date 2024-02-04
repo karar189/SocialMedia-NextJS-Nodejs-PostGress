@@ -5,7 +5,7 @@ const postController = require("../controllers/postController");
 router.post("/", postController.createPost);
 router.get("/", postController.getAllPosts);
 router.get("/user/:userId", postController.getPostsByUser);
-router.get("/search", postController.searchPosts);
+
 router.get("/:postId", postController.getPostById);
 
 router.put("/:postId", postController.updatePost);

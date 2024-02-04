@@ -6,7 +6,7 @@ const Navbar = () => {
   return (
     <>
       <Head>
-        <title>next-pwa example</title>
+        <title>Social Media PWA</title>
       </Head>
       <nav>
         <h2>

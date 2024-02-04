@@ -20,7 +20,6 @@ const PostPage = () => {
   // Local state for user input and toggle
   const [searchTerm, setSearchTerm] = useState("");
   const [showUserPostsOnly, setShowUserPostsOnly] = useState(false);
-  const [editingPostId, setEditingPostId] = useState(null);
   const handleShowUserPostsToggle = () => {
     setShowUserPostsOnly((prevState) => !prevState);
   };
@@ -69,7 +68,6 @@ const PostPage = () => {
             <button onClick={handleShowUserPostsToggle}>
               {showUserPostsOnly ? "Show All Posts" : "Show My Posts"}
             </button>
-            <button onClick={handleUpdatePost}>Update Post</button>
             <PostForm />
           </div>
           <ul>
@@ -78,12 +76,10 @@ const PostPage = () => {
                 key={index}
                 post={post}
                 onEdit={() => handleEditPost(post)}
+                onUpdate={() => handleUpdatePost(post)}
                 onDelete={() => handleDeletePost(post.id)}
               />
             ))}
-            {/* {editingPostId && (
-              <button onClick={handleUpdatePost}>Update Post</button>
-            )} */}
           </ul>
           <br />
         </div>
