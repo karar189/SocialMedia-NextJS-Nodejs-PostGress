@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import Navbar from "../components/Navbar";
+import "../styles/global.css";
 
 const _App = ({ Component, pageProps }) => {
   const [queryClient] = React.useState(() => new QueryClient());

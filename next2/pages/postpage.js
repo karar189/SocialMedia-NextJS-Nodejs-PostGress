@@ -3,12 +3,11 @@ import { useStore } from "../store/index";
 import ProtectedRoute from "../components/ProtectedRoute";
 import PostItem from "../components/PostItem";
 import PostForm from "../components/PostForm";
-import SearchBar from "../components/SearchBar"; // Import the SearchBar component
+import SearchBar from "../components/SearchBar";
 
 const PostPage = () => {
   const {
     user,
-    clearUser,
     posts,
     fetchPosts,
     fetchUserPosts,
@@ -17,7 +16,6 @@ const PostPage = () => {
     handleDeletePost,
   } = useStore();
 
-  // Local state for user input and toggle
   const [searchTerm, setSearchTerm] = useState("");
   const [showUserPostsOnly, setShowUserPostsOnly] = useState(false);
   const handleShowUserPostsToggle = () => {
@@ -42,34 +40,18 @@ const PostPage = () => {
       : matchesSearchTerm && post.user_id === user.userId;
   });
 
-  // console.log("Filtered POstttts", filteredPosts);
-
-  const handleLogout = () => {
-    clearUser();
-  };
   return (
     <ProtectedRoute>
-      <h1>This is route /postpage</h1>
-
       <div>
-        {user ? (
-          <>
-            <p>Welcome, {user.username}!</p>
-            <button onClick={handleLogout}>Logout</button>
-          </>
-        ) : (
-          <p>No User</p>
-        )}
-
+        <div className="formComponent">
+          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+          <br />
+          <button onClick={handleShowUserPostsToggle}>
+            {showUserPostsOnly ? "Show All Posts" : "Show My Posts"}
+          </button>
+          <PostForm />
+        </div>
         <div>
-          <div className="formComponent">
-            <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-
-            <button onClick={handleShowUserPostsToggle}>
-              {showUserPostsOnly ? "Show All Posts" : "Show My Posts"}
-            </button>
-            <PostForm />
-          </div>
           <ul>
             {filteredPosts.map((post, index) => (
               <PostItem

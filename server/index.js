@@ -5,7 +5,7 @@ const userRoutes = require("./routes/userRoutes");
 const postRoutes = require("./routes/postRoutes");
 
 const app = express();
-const port = process.env.PORT || 4000;
+const port = 4000;
 
 // Middleware
 app.use(bodyParser.json());
