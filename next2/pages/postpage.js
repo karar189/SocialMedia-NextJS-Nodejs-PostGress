@@ -42,16 +42,22 @@ const PostPage = () => {
 
   return (
     <ProtectedRoute>
-      <div>
-        <div className="formComponent">
-          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-          <br />
-          <button onClick={handleShowUserPostsToggle}>
-            {showUserPostsOnly ? "Show All Posts" : "Show My Posts"}
-          </button>
+      <div className="flex h-screen  bg-gradient-to-r from-purple-300 via-purple-200 to-purple-100  px-32">
+        <div className="w-2/4 h-full overflow-y-auto sticky top-0 ">
+          <div className=" mt-6">
+            <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+            <button
+              className="my-2 p-2 bg-blue-500 text-white rounded"
+              onClick={handleShowUserPostsToggle}
+            >
+              {showUserPostsOnly ? "Show All Posts" : "Show My Posts"}
+            </button>
+          </div>
+
           <PostForm />
         </div>
-        <div>
+        <div className="w-3/4 h-full overflow-y-auto">
+          <h1 className="text-6xl mt-6 mb-4">POSTS</h1>
           <ul>
             {filteredPosts.map((post, index) => (
               <PostItem
@@ -63,7 +69,6 @@ const PostPage = () => {
               />
             ))}
           </ul>
-          <br />
         </div>
       </div>
     </ProtectedRoute>

@@ -48,6 +48,7 @@ const _App = ({ Component, pageProps }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <Navbar />
+
       <Component {...pageProps} />
       <ReactQueryDevtools />
     </QueryClientProvider>

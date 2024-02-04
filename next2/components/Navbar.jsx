@@ -1,8 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Head from "next/head";
-import Image from "next/image"; // if you're using Next.js Image component for logo
-// import { BellIcon, SearchIcon } from "@heroicons/react/outline"; // assuming you're using Heroicons
+import Image from "next/image";
 import { useStore } from "../store/index";
 const Navbar = () => {
   const { user, clearUser } = useStore();
@@ -15,8 +14,7 @@ const Navbar = () => {
       <Head>
         <title>Social Media PWA</title>
       </Head>
-      <nav className="bg-white shadow flex items-center justify-between px-4 py-3">
-        {/* Logo and Navigation Links */}
+      <nav className="bg-white shadow flex items-center justify-between px-32 py-3">
         <div className="flex items-center">
           <Image
             src="/path-to-your-logo.svg"
