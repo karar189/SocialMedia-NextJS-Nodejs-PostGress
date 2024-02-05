@@ -25,25 +25,37 @@ This application is a basic social media platform that allows users to interact 
 - **PostgreSQL:** Database.
 
 ## Demo Video
+![image](https://github.com/karar189/SocialMedia-NextJS-Nodejs-PostGress/assets/52580094/b8bf9aac-ec17-4e8f-bc48-b09a47b88559)(https://sendspark.com/share/x125621pevwi0v97vpg9n9bhr9u1nqj5)
 
 A demo of the application can be viewed [here](https://sendspark.com/share/x125621pevwi0v97vpg9n9bhr9u1nqj5).
 
 ## Installation and Setup
 
-Provide instructions on how to install and set up the application. This might include steps to clone the repo, install dependencies, set up the database, and run the application locally.
+1. To start  Client 
 
 ```bash
-# Clone the repository
-git clone [repository URL]
-
-# Navigate to the repository directory
-cd [repository directory]
-
-# Install dependencies
-npm install
-
-# Set up the database
-[Database setup instructions]
-
-# Run the application
+git clone the repo
+cd next2
+npm i
 npm run dev
+```
+
+- For Login Details use - username and password
+2. To setup Database
+```bash
+cd server
+cd db
+-add the following info
+  user: "yourUser",
+  host: "localhost",
+  database: "yourdbName",
+  password: "yourPsqlPassword",
+  port: 5432, // Default PostgreSQL port
+```
+3. To start server
+
+```bash
+cd server
+npm install
+npm run dev
+```
