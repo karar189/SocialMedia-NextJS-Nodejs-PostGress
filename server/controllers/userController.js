@@ -1,6 +1,4 @@
-// controllers/userController.js
-
-const pool = require("../db/db"); // Assuming your database connection is in db.js
+const pool = require("../db/db");
 
 const createUser = async (req, res) => {
   try {
@@ -16,29 +14,6 @@ const createUser = async (req, res) => {
   }
 };
 
-// const loginUser = async (req, res) => {
-//   try {
-//     const { username, password } = req.body;
-//     const user = await pool.query("SELECT * FROM users WHERE username = $1", [
-//       username,
-//     ]);
-
-//     if (user.rows.length === 0) {
-//       return res.status(400).json({ error: "Invalid Credentials" });
-//     }
-
-//     const validPassword = password === user.rows[0].password; // Replace with password hashing comparison
-//     if (!validPassword) {
-//       return res.status(400).json({ error: "Invalid Credentials" });
-//     }
-
-//     res.json({ message: "Logged in successfully" });
-//   } catch (error) {
-//     console.error("Error logging in user:", error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
-
 const loginUser = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -50,16 +25,14 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ error: "Invalid Credentials" });
     }
 
-    const validPassword = password === user.rows[0].password; // Replace with password hashing comparison
+    const validPassword = password === user.rows[0].password;
     if (!validPassword) {
       return res.status(400).json({ error: "Invalid Credentials" });
     }
-
-    // Include the user ID in the response
     res.json({
       message: "Logged in successfully",
-      userId: user.rows[0].id, // Send back the user ID
-      username: user.rows[0].username, // Optionally send back the username
+      userId: user.rows[0].id,
+      username: user.rows[0].username,
     });
   } catch (error) {
     console.error("Error logging in user:", error);
@@ -78,7 +51,7 @@ const getAllUsers = async (req, res) => {
 };
 const getUserById = async (req, res) => {
   try {
-    const userId = req.params.id; // Extract the user ID from the request parameters
+    const userId = req.params.id;
     const user = await pool.query("SELECT * FROM users WHERE id = $1", [
       userId,
     ]);

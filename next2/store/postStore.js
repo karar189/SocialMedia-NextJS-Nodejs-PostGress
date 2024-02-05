@@ -1,86 +1,169 @@
+// postStore.js
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { fetchPosts, addNewPost, deletePost, updatePost } from "../api/postApi";
+import * as api from "../api/postApi";
+
+const handleApiResponse = async (set, onSuccess, onError, promise) => {
+  try {
+    const result = await promise;
+    onSuccess(result);
+  } catch (error) {
+    console.error(onError, error);
+  }
+};
 
 export const usePostStore = create(
   devtools((set) => ({
     posts: [],
     newPostTitle: "",
-    newPostContent: "",
-    newPostImageUrl: "",
-
     setNewPostTitle: (title) => set({ newPostTitle: title }),
+    newPostContent: "",
     setNewPostContent: (content) => set({ newPostContent: content }),
+    newPostImageUrl: "",
     setNewPostImageUrl: (imageUrl) => set({ newPostImageUrl: imageUrl }),
 
-    fetchPosts: () => {
-      fetchPosts()
-        .then((posts) => {
-          set({ posts });
-        })
-        .catch((error) => {
-          console.error("Error in fetchPosts:", error);
-        });
+    fetchUserPosts: async () => {
+      const state = usePostStore.getState();
+      if (state.user.userId) {
+        handleApiResponse(
+          set,
+          (posts) => set({ posts }),
+          "Error in fetchUserPosts",
+          api.fetchPostsByUser(state.user.userId)
+        );
+      }
     },
 
-    addNewPost: () => {
+    fetchPosts: () =>
+      handleApiResponse(
+        set,
+        (posts) => set({ posts }),
+        "Error in fetchPosts",
+        api.fetchPosts()
+      ),
+
+    addNewPost: async () => {
       const state = usePostStore.getState();
       const newPost = {
+        user_id: state.user.userId,
         title: state.newPostTitle,
         content: state.newPostContent,
         image_url: state.newPostImageUrl,
       };
 
-      addNewPost(newPost)
-        .then((addedPost) => {
+      handleApiResponse(
+        set,
+        (addedPost) => {
           set((state) => ({
             posts: [...state.posts, addedPost],
             newPostTitle: "",
             newPostContent: "",
             newPostImageUrl: "",
           }));
-        })
-        .catch((error) => {
-          console.error("Error in addNewPost:", error);
-        });
+          alert("Post Added");
+        },
+        "Error in addNewPost",
+        api.addNewPost(newPost)
+      );
     },
 
-    deletePost: (postId) => {
-      deletePost(postId)
-        .then(() => {
-          set((state) => ({
-            posts: state.posts.filter((post) => post.id !== postId),
-          }));
-        })
-        .catch((error) => {
-          console.error("Error in deletePost:", error);
-        });
+    deletePost: async (postId) => {
+      const state = usePostStore.getState();
+      const postToDelete = state.posts.find((post) => post.id === postId);
+
+      if (
+        postToDelete &&
+        state.user &&
+        state.user.userId === postToDelete.user_id
+      ) {
+        handleApiResponse(
+          set,
+          () => {
+            set((state) => ({
+              posts: state.posts.filter((post) => post.id !== postId),
+            }));
+            alert("Post deleted successfully");
+          },
+          "Error in deletePost",
+          api.deletePost(postId)
+        );
+      } else {
+        alert("You are not authorized to delete this post.");
+      }
     },
 
-    updatePost: (postId, updatedPost) => {
-      updatePost(postId, updatedPost)
-        .then((updated) => {
+    updatePost: async (postId, updatedPost) => {
+      handleApiResponse(
+        set,
+        (updated) => {
           set((state) => ({
             posts: state.posts.map((post) =>
               post.id === postId ? updated : post
             ),
           }));
-        })
-        .catch((error) => {
-          console.error("Error in updatePost:", error);
-        });
+          alert("Post updated successfully");
+        },
+        "Error in updatePost",
+        api.updatePost(postId, updatedPost)
+      );
     },
+
+    likePost: async (postId) => {
+      const state = usePostStore.getState();
+      const userId = state.user.userId;
+
+      try {
+        await api.likePost(postId, userId);
+        set((state) => ({
+          posts: state.posts.map((p) =>
+            p.id === postId ? { ...p, like_count: p.like_count + 1 } : p
+          ),
+        }));
+      } catch (error) {
+        if (error.response && error.response.status === 400) {
+          alert("User already liked this post.");
+        } else {
+          console.error("Error in likePost", error);
+        }
+      }
+    },
+
+    dislikePost: async (postId) => {
+      const state = usePostStore.getState();
+      const userId = state.user.userId;
+
+      try {
+        await api.dislikePost(postId, userId);
+        set((state) => ({
+          posts: state.posts.map((p) =>
+            p.id === postId ? { ...p, dislike_count: p.dislike_count + 1 } : p
+          ),
+        }));
+      } catch (error) {
+        if (error.response && error.response.status === 400) {
+          alert("User already disliked this post.");
+        } else {
+          console.error("Error in dislikePost", error);
+        }
+      }
+    },
+
     handleEditPost: (post) => {
-      set({
-        newPostTitle: post.title,
-        newPostContent: post.content,
-        newPostImageUrl: post.image_url,
-        editingPostId: post.id,
-      });
+      const state = usePostStore.getState();
+      if (state.user && state.user.userId === post.user_id) {
+        set({
+          newPostTitle: post.title,
+          newPostContent: post.content,
+          newPostImageUrl: post.image_url,
+          editingPostId: post.id,
+        });
+      } else {
+        alert("You are not authorized to edit this post.");
+      }
     },
 
     handleUpdatePost: async (postId) => {
-      const state = useStore.getState();
+      const state = usePostStore.getState();
       const updatedPost = {
         title: state.newPostTitle,
         content: state.newPostContent,
@@ -89,7 +172,7 @@ export const usePostStore = create(
 
       try {
         await api.updatePost(postId.id, updatedPost);
-        useStore.setState((state) => ({
+        usePostStore.setState((state) => ({
           posts: state.posts.map((post) =>
             post.id === postId.id ? { ...post, ...updatedPost } : post
           ),
@@ -100,25 +183,26 @@ export const usePostStore = create(
       }
     },
 
-    handleDeletePost: (postId) => {
-      const state = useStore.getState();
+    handleDeletePost: async (postId) => {
+      const state = usePostStore.getState();
       const postToDelete = state.posts.find((post) => post.id === postId);
+
       if (
         postToDelete &&
         state.user &&
         state.user.userId === postToDelete.user_id
       ) {
-        api
-          .deletePost(postId)
-          .then(() => {
-            useStore.setState((state) => ({
+        handleApiResponse(
+          set,
+          () => {
+            set((state) => ({
               posts: state.posts.filter((post) => post.id !== postId),
             }));
             alert("Post deleted successfully");
-          })
-          .catch((error) => {
-            console.error("Error in deletePost:", error);
-          });
+          },
+          "Error in deletePost",
+          api.deletePost(postId)
+        );
       } else {
         alert("You are not authorized to delete this post.");
       }

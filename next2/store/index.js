@@ -236,5 +236,34 @@ export const useStore = create(
         alert("You are not authorized to delete this post.");
       }
     },
+    searchTerm: "",
+    setSearchTerm: (term) => set({ searchTerm: term }),
+
+    showUserPostsOnly: false,
+    setShowUserPostsOnly: () =>
+      set((state) => ({
+        showUserPostsOnly: !state.showUserPostsOnly,
+      })),
+
+    sortedAndFilteredPosts: [],
+    updateSortedAndFilteredPosts: () => {
+      set((state) => {
+        const filteredPosts = state.posts.filter((post) => {
+          const matchesSearchTerm =
+            post.title.toLowerCase().includes(state.searchTerm.toLowerCase()) ||
+            post.content.toLowerCase().includes(state.searchTerm.toLowerCase());
+
+          return !state.showUserPostsOnly
+            ? matchesSearchTerm
+            : matchesSearchTerm && post.user_id === state.user.userId;
+        });
+
+        const sortedPosts = filteredPosts.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+
+        return { sortedAndFilteredPosts: sortedPosts };
+      });
+    },
   }))
 );

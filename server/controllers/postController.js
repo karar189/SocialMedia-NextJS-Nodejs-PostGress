@@ -1,4 +1,4 @@
-const pool = require("../db/db"); // Assuming your database connection is in db.js
+const pool = require("../db/db");
 
 const createPost = async (req, res) => {
   try {
