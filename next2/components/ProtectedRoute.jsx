@@ -6,16 +6,16 @@ const ProtectedRoute = ({ children }) => {
   const user = useStore((state) => state.user);
   const router = useRouter();
 
-  useEffect(() => {
-    if (!user) {
-      // Redirect to login
-      router.push("/authpage");
-    }
-  }, [user, router]);
+  // useEffect(() => {
+  //   if (!user) {
+  //     // Redirect to login
+  //     router.push("/authpage");
+  //   }
+  // }, [user, router]);
 
-  if (!user) {
-    return null; // or a loading indicator
-  }
+  // if (!user) {
+  //   return null; // or a loading indicator
+  // }
 
   return <>{children}</>;
 };

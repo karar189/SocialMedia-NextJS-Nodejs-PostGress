@@ -111,20 +111,16 @@ const likePost = async (req, res) => {
   const userId = req.body.user_id;
 
   try {
-    // Check if the user has already liked the post
     const existingLike = await pool.query(
       "SELECT * FROM likes WHERE user_id = $1 AND post_id = $2",
       [userId, postId]
     );
 
     if (existingLike.rows.length === 0) {
-      // User hasn't liked the post, so add a new like
       await pool.query("INSERT INTO likes (user_id, post_id) VALUES ($1, $2)", [
         userId,
         postId,
       ]);
-
-      // Update the like count in the posts table
       await pool.query(
         "UPDATE posts SET like_count = like_count + 1 WHERE id = $1",
         [postId]
@@ -132,7 +128,6 @@ const likePost = async (req, res) => {
 
       res.json({ message: "Post liked successfully" });
     } else {
-      // User has already liked the post, you can handle this case accordingly
       res.status(400).json({ error: "User has already liked the post" });
     }
   } catch (error) {

@@ -30,15 +30,17 @@ const PostPage = () => {
     }
   }, [showUserPostsOnly, fetchPosts, fetchUserPosts]);
 
-  const filteredPosts = posts.filter((post) => {
-    const matchesSearchTerm =
-      post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.content.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredPosts = posts
+    .filter((post) => {
+      const matchesSearchTerm =
+        post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        post.content.toLowerCase().includes(searchTerm.toLowerCase());
 
-    return !showUserPostsOnly
-      ? matchesSearchTerm
-      : matchesSearchTerm && post.user_id === user.userId;
-  });
+      return !showUserPostsOnly
+        ? matchesSearchTerm
+        : matchesSearchTerm && post.user_id === user.userId;
+    })
+    .reverse();
 
   return (
     <ProtectedRoute>

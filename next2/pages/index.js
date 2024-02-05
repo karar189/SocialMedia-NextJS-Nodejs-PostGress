@@ -8,11 +8,8 @@ const HeroSection = () => {
         <title>Social Media App</title>
       </Head>
       <div className="flex justify-center items-center h-screen bg-gradient-to-r from-purple-300 via-purple-200 to-purple-100">
-        {/* Container for content */}
         <div className="text-center">
           {/* <img src="/" alt="Logo" className="mx-auto mb-8" /> */}
-
-          {/* Announcement bar (optional) */}
           <div className="bg-white text-purple-600 py-2 px-4 rounded-full mb-8 inline-block shadow-md">
             Announcing our new features.{" "}
             <Link href="/features">
@@ -36,9 +33,9 @@ const HeroSection = () => {
             <button className="bg-blue-600 text-white font-bold py-3 px-8 rounded-full mr-4 hover:bg-blue-700 transition duration-300">
               Get started
             </button>
-            <Link href="/learn-more">
+            <Link href="/authpage">
               <a className="text-blue-600 font-semibold py-3 px-8 rounded-full inline-block border border-blue-600 hover:bg-blue-600 hover:text-white transition duration-300">
-                Learn more
+                Login Now
               </a>
             </Link>
           </div>

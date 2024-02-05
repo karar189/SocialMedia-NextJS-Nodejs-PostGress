@@ -132,14 +132,66 @@ export const useStore = create(
         "Error in updatePost"
       )(api.updatePost(postId, updatedPost));
     },
+    likePost: (postId) => {
+      const state = useStore.getState();
+      const userId = state.user.userId;
+
+      api
+        .likePost(postId, userId)
+        .then(() => {
+          // Successfully liked the post, update state as needed
+          set((state) => ({
+            posts: state.posts.map((p) =>
+              p.id === postId ? { ...p, like_count: p.like_count + 1 } : p
+            ),
+          }));
+        })
+        .catch((error) => {
+          if (error.response && error.response.status === 400) {
+            // Assuming the backend returns a 400 status for already liked
+            alert("User already liked this post.");
+          } else {
+            console.error("Error in likePost", error);
+          }
+        });
+    },
+
+    dislikePost: (postId) => {
+      const state = useStore.getState();
+      const userId = state.user.userId;
+
+      api
+        .dislikePost(postId, userId)
+        .then(() => {
+          // Successfully disliked the post, update state as needed
+          set((state) => ({
+            posts: state.posts.map((p) =>
+              p.id === postId ? { ...p, dislike_count: p.dislike_count + 1 } : p
+            ),
+          }));
+        })
+        .catch((error) => {
+          if (error.response && error.response.status === 400) {
+            // Assuming the backend returns a 400 status for already disliked
+            alert("User already disliked this post.");
+          } else {
+            console.error("Error in dislikePost", error);
+          }
+        });
+    },
 
     handleEditPost: (post) => {
-      set({
-        newPostTitle: post.title,
-        newPostContent: post.content,
-        newPostImageUrl: post.image_url,
-        editingPostId: post.id,
-      });
+      const state = useStore.getState();
+      if (state.user && state.user.userId === post.user_id) {
+        set({
+          newPostTitle: post.title,
+          newPostContent: post.content,
+          newPostImageUrl: post.image_url,
+          editingPostId: post.id,
+        });
+      } else {
+        alert("You are not authorized to edit this post.");
+      }
     },
 
     handleUpdatePost: async (postId) => {
@@ -151,10 +203,10 @@ export const useStore = create(
       };
 
       try {
-        await api.updatePost(postId, updatedPost);
-        set((state) => ({
+        await api.updatePost(postId.id, updatedPost);
+        useStore.setState((state) => ({
           posts: state.posts.map((post) =>
-            post.id === postId ? { ...post, ...updatedPost } : post
+            post.id === postId.id ? { ...post, ...updatedPost } : post
           ),
         }));
         alert("Post updated successfully");

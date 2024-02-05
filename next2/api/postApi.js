@@ -50,3 +50,23 @@ export const fetchPostsByUser = (userId) => {
       throw error;
     });
 };
+export const likePost = (postId, userId) => {
+  console.log("api,postid", postId);
+  console.log("api,userid", userId);
+  return axios
+    .post(`${API_BASE_URL}/posts/${postId}/like`, { user_id: userId })
+    .then((response) => response.data)
+    .catch((error) => {
+      console.error("Failed to like post", error);
+      throw error;
+    });
+};
+export const dislikePost = (postId, userId) => {
+  return axios
+    .post(`${API_BASE_URL}/posts/${postId}/dislike`, { user_id: userId })
+    .then((response) => response.data)
+    .catch((error) => {
+      console.error("Failed to dislike post", error);
+      throw error;
+    });
+};
