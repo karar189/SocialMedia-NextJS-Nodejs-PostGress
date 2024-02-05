@@ -1,4 +1,8 @@
 # Social Media Web App
+## Demo Video
+![image](https://github.com/karar189/SocialMedia-NextJS-Nodejs-PostGress/assets/52580094/b8bf9aac-ec17-4e8f-bc48-b09a47b88559)(https://sendspark.com/share/x125621pevwi0v97vpg9n9bhr9u1nqj5)
+
+A demo of the application can be viewed [here](https://sendspark.com/share/x125621pevwi0v97vpg9n9bhr9u1nqj5).
 
 ## Description
 
@@ -24,10 +28,6 @@ This application is a basic social media platform that allows users to interact 
 - **ExpressJS:** Backend framework.
 - **PostgreSQL:** Database.
 
-## Demo Video
-![image](https://github.com/karar189/SocialMedia-NextJS-Nodejs-PostGress/assets/52580094/b8bf9aac-ec17-4e8f-bc48-b09a47b88559)(https://sendspark.com/share/x125621pevwi0v97vpg9n9bhr9u1nqj5)
-
-A demo of the application can be viewed [here](https://sendspark.com/share/x125621pevwi0v97vpg9n9bhr9u1nqj5).
 
 ## Installation and Setup
 
