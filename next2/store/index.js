@@ -148,7 +148,6 @@ export const useStore = create(
         })
         .catch((error) => {
           if (error.response && error.response.status === 400) {
-            // Assuming the backend returns a 400 status for already liked
             alert("User already liked this post.");
           } else {
             console.error("Error in likePost", error);
@@ -163,7 +162,6 @@ export const useStore = create(
       api
         .dislikePost(postId, userId)
         .then(() => {
-          // Successfully disliked the post, update state as needed
           set((state) => ({
             posts: state.posts.map((p) =>
               p.id === postId ? { ...p, dislike_count: p.dislike_count + 1 } : p

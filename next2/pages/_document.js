@@ -1,7 +1,7 @@
 import Document, { Html, Head, Main, NextScript } from "next/document";
 
 const APP_NAME = "Social Media PWA";
-const APP_DESCRIPTION = "This is an example of using next-pwa plugin";
+const APP_DESCRIPTION = "This is a Social media Application";
 
 class _Document extends Document {
   static async getInitialProps(ctx) {

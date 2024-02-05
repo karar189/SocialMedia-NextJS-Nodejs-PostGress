@@ -29,8 +29,8 @@ const PostPage = () => {
       fetchPosts();
     }
   }, [showUserPostsOnly, fetchPosts, fetchUserPosts]);
-
-  const filteredPosts = posts
+  const sortedAndFilteredPosts = posts
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
     .filter((post) => {
       const matchesSearchTerm =
         post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -39,8 +39,7 @@ const PostPage = () => {
       return !showUserPostsOnly
         ? matchesSearchTerm
         : matchesSearchTerm && post.user_id === user.userId;
-    })
-    .reverse();
+    });
 
   return (
     <ProtectedRoute>
@@ -61,7 +60,7 @@ const PostPage = () => {
         <div className="w-3/4 h-full overflow-y-auto">
           <h1 className="text-6xl mt-6 mb-4">POSTS</h1>
           <ul>
-            {filteredPosts.map((post, index) => (
+            {sortedAndFilteredPosts.map((post, index) => (
               <PostItem
                 key={index}
                 post={post}

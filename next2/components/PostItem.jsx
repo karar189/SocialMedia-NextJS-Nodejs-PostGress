@@ -41,7 +41,10 @@ const PostItem = ({ post, onEdit, onDelete, onUpdate }) => {
                 alt="Your Name"
               />
             </span>
-            <p className="text-gray-700 text-base"> UserName</p>
+            <p className="text-gray-700 text-base font-semibold mt-2">
+              {" "}
+              User Number - {post.user_id}
+            </p>
           </div>
           <p className="text-gray-600 mb-2">{formatDate(post.created_at)}</p>
           {post.image_url && (
